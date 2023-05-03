@@ -12,8 +12,23 @@ def shortest_shortest_path(graph, source):
       a dict where each key is a vertex and the value is a tuple of
       (shortest path weight, shortest path number of edges). See test case for example.
     """
-    ### TODO
-    pass
+    def path_helper(visited, frontier, graph):
+      if len(frontier) == 0:
+        return visited
+      else:
+        distance, node, edges = heappop(frontier)
+        if node in visited:
+          return path_helper(visited, frontier)
+        else:
+          visited[node] = (distance, edges)
+          for neighbor_node, node_weight in graph[node]:
+            heappush(frontier, (distance + node_weight, neighbor_node, edges + 1))
+          return path_helper(visited, frontier, graph)
+
+    frontier = []
+    visited = {}
+    heappush(frontier, (0, source, 0))
+    return path_helper(visited, frontier, graph)
     
 def test_shortest_shortest_path():
 
@@ -35,13 +50,24 @@ def test_shortest_shortest_path():
     
     
 def bfs_path(graph, source):
-    """
-    Returns:
-      a dict where each key is a vertex and the value is the parent of 
-      that vertex in the shortest path tree.
-    """
-    ###TODO
-    pass
+  parent = {}
+  for i in graph:
+    parent[i] = None
+
+  visited = set([source])
+  frontier = [source]
+
+  while len(frontier) > 0:
+    node = frontier.pop(0)
+    for j in graph[node]:
+      if j not in visited:
+        parent[j] = node
+        visited.add(j)
+        frontier.append(j)
+
+  print(parent)
+  return parent
+      
 
 def get_sample_graph():
      return {'s': {'a', 'b'},
@@ -58,17 +84,22 @@ def test_bfs_path():
     assert parents['b'] == 's'    
     assert parents['c'] == 'b'
     assert parents['d'] == 'c'
-    
-def get_path(parents, destination):
-    """
-    Returns:
-      The shortest path from the source node to this destination node 
-      (excluding the destination node itself). See test_get_path for an example.
-    """
-    ###TODO
-    pass
 
-def test_get_path():
+graph = get_sample_graph()
+print('run')
+print(bfs_path(graph, 's'))
+
+def get_path(parents, destination):
+  path = []
+  node = destination
+
+  while node != parents[node]:
+    node = parents[node]
+    path.append(node)
+
+  return(path.reverse())
+  
+def test_nodepath():
     graph = get_sample_graph()
     parents = bfs_path(graph, 's')
     assert get_path(parents, 'd') == 'sbc'
