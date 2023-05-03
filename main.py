@@ -53,7 +53,7 @@ def bfs_path(graph, source):
   parent = {}
   for i in graph:
     parent[i] = None
-
+  parent[source] = source
   visited = set([source])
   frontier = [source]
 
@@ -65,7 +65,6 @@ def bfs_path(graph, source):
         visited.add(j)
         frontier.append(j)
 
-  print(parent)
   return parent
       
 
@@ -85,10 +84,6 @@ def test_bfs_path():
     assert parents['c'] == 'b'
     assert parents['d'] == 'c'
 
-graph = get_sample_graph()
-print('run')
-print(bfs_path(graph, 's'))
-
 def get_path(parents, destination):
   path = []
   node = destination
@@ -97,7 +92,12 @@ def get_path(parents, destination):
     node = parents[node]
     path.append(node)
 
-  return(path.reverse())
+  path.reverse()
+  ret = ""
+  
+  for i in path: ret+=i
+    
+  return ret
   
 def test_nodepath():
     graph = get_sample_graph()
